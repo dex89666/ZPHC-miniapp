@@ -2,7 +2,7 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>ZPHC Store</title>
   <style>
     body {
@@ -34,41 +34,80 @@
       border-radius: 5px;
       cursor: pointer;
     }
+    #cart {
+      margin-top: 30px;
+      border-top: 2px dashed #ccc;
+      padding-top: 20px;
+    }
+    #checkout {
+      background: #2196F3;
+      color: white;
+      padding: 12px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
   </style>
 </head>
 <body>
   <h2>🛒 Наши товары</h2>
 
-  <div class="product">
-    <img src="https://via.placeholder.com/300x200" alt="Товар 1" />
-    <h3>Продукт 1</h3>
-    <p>Цена: 100 000 сум</p>
-    <button class="buy-btn">Купить</button>
+  <div class="product" data-name="Тестостерон Энантат 250" data-price="25">
+    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Testosterone.png" alt="Тестостерон Энантат">
+    <h3>Тестостерон Энантат 250</h3>
+    <p>Для повышения уровня тестостерона</p>
+    <p>Цена: $25</p>
+    <button class="buy-btn">В корзину</button>
   </div>
 
-  <div class="product">
-    <img src="https://via.placeholder.com/300x200" alt="Товар 2" />
-    <h3>Продукт 2</h3>
-    <p>Цена: 150 000 сум</p>
-    <button class="buy-btn">Купить</button>
+  <div class="product" data-name="Тестостерон Микс (Сустанон)" data-price="25">
+    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Mix.png" alt="Тестостерон Микс">
+    <h3>Тестостерон Микс (Сустанон)</h3>
+    <p>Смесь тестостеронов</p>
+    <p>Цена: $25</p>
+    <button class="buy-btn">В корзину</button>
+  </div>
+
+  <div id="cart">
+    <h3>🧾 Корзина</h3>
+    <ul id="cart-items"></ul>
+    <p><strong>Итого: $<span id="total">0</span></strong></p>
+    <button id="checkout">Оплатить через USDT</button>
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
   <script>
     const tg = window.Telegram.WebApp;
-    tg.expand(); // разворачивает Mini App
+    tg.expand();
 
-    const buyButtons = document.querySelectorAll('.buy-btn');
-    buyButtons.forEach(btn => {
-      btn.addEventListener('click', () => {
-        tg.MainButton.text = "Подтвердить покупку";
-        tg.MainButton.show();
+    const cartItems = document.getElementById("cart-items");
+    const totalEl = document.getElementById("total");
+    const buttons = document.querySelectorAll(".buy-btn");
+    let total = 0;
+
+    buttons.forEach(btn => {
+      btn.addEventListener("click", () => {
+        const product = btn.closest(".product");
+        const name = product.dataset.name;
+        const price = parseFloat(product.dataset.price);
+        const li = document.createElement("li");
+        li.textContent = `${name} — $${price}`;
+        cartItems.appendChild(li);
+        total += price;
+        totalEl.textContent = total;
       });
     });
 
-    tg.MainButton.onClick(() => {
-      alert("Покупка отправлена!");
-      tg.MainButton.hide();
+    document.getElementById("checkout").addEventListener("click", () => {
+      tg.MainButton.text = "Отправить заказ";
+      tg.MainButton.show();
+
+      tg.MainButton.onClick(() => {
+        alert("Ваш заказ принят. Оплатите $" + total + " через USDT.\nМы с вами свяжемся.");
+        tg.MainButton.hide();
+        tg.sendData(JSON.stringify({total}));
+      });
     });
   </script>
 </body>
