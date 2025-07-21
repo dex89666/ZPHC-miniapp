@@ -1,34 +1,75 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>ZPHC Store</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
-    body { font-family: sans-serif; padding: 20px; }
-    .product { border: 1px solid #ddd; padding: 15px; margin-bottom: 15px; border-radius: 10px; }
-    .product img { width: 100%; max-width: 300px; border-radius: 5px; }
-    .product h3 { margin: 10px 0 5px; }
-    .product p { margin: 5px 0; }
-    .buy-btn { background: #4CAF50; color: white; padding: 10px 20px; border: none; border-radius: 5px; cursor: pointer; }
+    body {
+      font-family: sans-serif;
+      padding: 20px;
+    }
+    .product {
+      border: 1px solid #ddd;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 10px;
+    }
+    .product img {
+      width: 100%;
+      max-width: 300px;
+      border-radius: 5px;
+    }
+    .product h3 {
+      margin: 10px 0 5px;
+    }
+    .product p {
+      margin: 5px 0;
+    }
+    .buy-btn {
+      background: #4CAF50;
+      color: white;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
   <h2>🛒 Наши товары</h2>
 
   <div class="product">
-    <img src="https://via.placeholder.com/300x200" alt="Товар 1">
+    <img src="https://via.placeholder.com/300x200" alt="Товар 1" />
     <h3>Продукт 1</h3>
     <p>Цена: 100 000 сум</p>
     <button class="buy-btn">Купить</button>
   </div>
 
   <div class="product">
-    <img src="https://via.placeholder.com/300x200" alt="Товар 2">
+    <img src="https://via.placeholder.com/300x200" alt="Товар 2" />
     <h3>Продукт 2</h3>
     <p>Цена: 150 000 сум</p>
     <button class="buy-btn">Купить</button>
   </div>
 
+  <script src="https://telegram.org/js/telegram-web-app.js"></script>
+  <script>
+    const tg = window.Telegram.WebApp;
+    tg.expand(); // разворачивает Mini App
+
+    const buyButtons = document.querySelectorAll('.buy-btn');
+    buyButtons.forEach(btn => {
+      btn.addEventListener('click', () => {
+        tg.MainButton.text = "Подтвердить покупку";
+        tg.MainButton.show();
+      });
+    });
+
+    tg.MainButton.onClick(() => {
+      alert("Покупка отправлена!");
+      tg.MainButton.hide();
+    });
+  </script>
 </body>
 </html>
