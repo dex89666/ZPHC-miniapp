@@ -8,9 +8,11 @@
     body {
       font-family: sans-serif;
       padding: 20px;
+      background: #f9f9f9;
     }
     .product {
       border: 1px solid #ddd;
+      background: white;
       padding: 15px;
       margin-bottom: 15px;
       border-radius: 10px;
@@ -19,6 +21,7 @@
       width: 100%;
       max-width: 300px;
       border-radius: 5px;
+      margin-bottom: 10px;
     }
     .product h3 {
       margin: 10px 0 5px;
@@ -34,46 +37,25 @@
       border-radius: 5px;
       cursor: pointer;
     }
-    #cart {
-      margin-top: 30px;
-      border-top: 2px dashed #ccc;
-      padding-top: 20px;
-    }
-    #checkout {
-      background: #2196F3;
-      color: white;
-      padding: 12px 20px;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      margin-top: 10px;
-    }
   </style>
 </head>
 <body>
   <h2>🛒 Наши товары</h2>
 
   <div class="product" data-name="Тестостерон Энантат 250" data-price="25">
-    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Testosterone.png" alt="Тестостерон Энантат">
+    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Testosterone.png" alt="Энантат" />
     <h3>Тестостерон Энантат 250</h3>
     <p>Для повышения уровня тестостерона</p>
-    <p>Цена: $25</p>
-    <button class="buy-btn">В корзину</button>
+    <p>Цена: 25$</p>
+    <button class="buy-btn">Добавить в корзину</button>
   </div>
 
   <div class="product" data-name="Тестостерон Микс (Сустанон)" data-price="25">
-    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Mix.png" alt="Тестостерон Микс">
+    <img src="https://raw.githubusercontent.com/dex89666/IMG/8ee78475609f118042fb7ccea74391ae98739f98/Mix.png" alt="Микс" />
     <h3>Тестостерон Микс (Сустанон)</h3>
-    <p>Смесь тестостеронов</p>
-    <p>Цена: $25</p>
-    <button class="buy-btn">В корзину</button>
-  </div>
-
-  <div id="cart">
-    <h3>🧾 Корзина</h3>
-    <ul id="cart-items"></ul>
-    <p><strong>Итого: $<span id="total">0</span></strong></p>
-    <button id="checkout">Оплатить через USDT</button>
+    <p>Микс тестостеронов</p>
+    <p>Цена: 25$</p>
+    <button class="buy-btn">Добавить в корзину</button>
   </div>
 
   <script src="https://telegram.org/js/telegram-web-app.js"></script>
@@ -81,33 +63,26 @@
     const tg = window.Telegram.WebApp;
     tg.expand();
 
-    const cartItems = document.getElementById("cart-items");
-    const totalEl = document.getElementById("total");
-    const buttons = document.querySelectorAll(".buy-btn");
-    let total = 0;
+    let cart = [];
 
+    const buttons = document.querySelectorAll('.buy-btn');
     buttons.forEach(btn => {
-      btn.addEventListener("click", () => {
-        const product = btn.closest(".product");
+      btn.addEventListener('click', () => {
+        const product = btn.closest('.product');
         const name = product.dataset.name;
         const price = parseFloat(product.dataset.price);
-        const li = document.createElement("li");
-        li.textContent = `${name} — $${price}`;
-        cartItems.appendChild(li);
-        total += price;
-        totalEl.textContent = total;
+
+        cart.push({ name, price });
+        tg.MainButton.text = `🧾 Подтвердить заказ (${cart.length} товаров, $${cart.reduce((sum, p) => sum + p.price, 0)})`;
+        tg.MainButton.show();
       });
     });
 
-    document.getElementById("checkout").addEventListener("click", () => {
-      tg.MainButton.text = "Отправить заказ";
-      tg.MainButton.show();
-
-      tg.MainButton.onClick(() => {
-        alert("Ваш заказ принят. Оплатите $" + total + " через USDT.\nМы с вами свяжемся.");
-        tg.MainButton.hide();
-        tg.sendData(JSON.stringify({total}));
-      });
+    tg.MainButton.onClick(() => {
+      const message = cart.map(item => `${item.name} — $${item.price}`).join('\n');
+      tg.sendData(message); // Отправляет данные в бота
+      tg.MainButton.hide();
+      alert("Заказ отправлен. С вами свяжутся для оплаты через USDT.");
     });
   </script>
 </body>
